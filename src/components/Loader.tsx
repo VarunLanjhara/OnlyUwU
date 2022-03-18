@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 
 const Loader = () => {
   useEffect(() => {
-    document.title = "YoutUwU - Loading";
+    document.title = "OnlyUwU - Loading";
   }, []);
   return (
     <Flex
