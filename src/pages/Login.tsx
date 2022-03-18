@@ -11,6 +11,8 @@ import {
 import { AiOutlineFire } from "react-icons/ai";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { doc, setDoc, getFirestore } from "firebase/firestore";
 
 const Login = () => {
   useEffect(() => {
@@ -20,12 +22,32 @@ const Login = () => {
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const db = getFirestore(app);
   const login = () => {
     setLoading(true);
     signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log(result);
-        setLoading(false);
+      .then(async (result) => {
+        await setDoc(doc(db, "users", result?.user?.uid), {
+          username: result?.user?.displayName,
+          bio: "I love OnlyUwU",
+          uid: result?.user?.uid,
+          pfp: result?.user?.photoURL,
+          email: result?.user?.email,
+        })
+          .then(() => {
+            setLoading(false);
+            navigate("/");
+          })
+          .catch((err) => {
+            toast({
+              title: "Error",
+              description: err?.message,
+              status: "error",
+              duration: 6900,
+              isClosable: true,
+            });
+          });
       })
       .catch((err) => {
         setLoading(false);

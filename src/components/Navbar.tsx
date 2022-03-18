@@ -22,6 +22,7 @@ import {
   MenuList,
   MenuItem,
   useMediaQuery,
+  useToast
 } from "@chakra-ui/react";
 import { FaUserCircle } from "react-icons/fa";
 import { AiFillStar } from "react-icons/ai";
@@ -37,6 +38,8 @@ import {
   PopoverCloseButton,
   PopoverAnchor,
 } from "@chakra-ui/react";
+import { getAuth, signOut } from "firebase/auth";
+import { app } from "../firebase";
 
 const Navbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -45,6 +48,23 @@ const Navbar = () => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const starOnGithub = () => {
     window.location.href = "https://github.com/VarunLanjhara/OnlyUwU";
+  };
+  const toast = useToast()
+  const auth = getAuth(app);
+  const logout = () => {
+    signOut(auth)
+      .then(() => {
+        navigate("/login");
+      })
+      .catch((err) => {
+        toast({
+          title: "Error",
+          description: err?.message,
+          status: "error",
+          duration: 6900,
+          isClosable: true,
+        });
+      });
   };
   return (
     <Flex
@@ -113,9 +133,7 @@ const Navbar = () => {
       )}
       <Popover>
         <PopoverTrigger>
-          {/* <Tooltip label="Notifications" openDelay={400}> */}
           <IconButton icon={<FaBell />} aria-label="Notification" />
-          {/* </Tooltip> */}
         </PopoverTrigger>
         <PopoverContent>
           <PopoverArrow />
@@ -162,12 +180,7 @@ const Navbar = () => {
             <AiFillStar size="1.4rem" />
             Star on github
           </MenuItem>
-          <MenuItem
-            gap="0.7rem"
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
+          <MenuItem gap="0.7rem" onClick={logout}>
             <IoLogOut size="1.4rem" />
             Logout
           </MenuItem>
