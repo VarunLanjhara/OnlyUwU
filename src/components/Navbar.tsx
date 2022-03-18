@@ -22,7 +22,7 @@ import {
   MenuList,
   MenuItem,
   useMediaQuery,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import { FaUserCircle } from "react-icons/fa";
 import { AiFillStar } from "react-icons/ai";
@@ -49,7 +49,7 @@ const Navbar = () => {
   const starOnGithub = () => {
     window.location.href = "https://github.com/VarunLanjhara/OnlyUwU";
   };
-  const toast = useToast()
+  const toast = useToast();
   const auth = getAuth(app);
   const logout = () => {
     signOut(auth)
@@ -162,15 +162,15 @@ const Navbar = () => {
       </Tooltip>
       <Menu>
         <MenuButton>
-          <Tooltip label="Idiot" openDelay={400}>
-            <Avatar cursor="pointer" />
+          <Tooltip label={auth?.currentUser?.displayName} openDelay={400}>
+            <Avatar cursor="pointer" src={auth?.currentUser?.photoURL as string | undefined} />
           </Tooltip>
         </MenuButton>
         <MenuList>
           <MenuItem
             gap="0.7rem"
             onClick={() => {
-              navigate("/profile/lmao");
+              navigate(`/profile/${auth?.currentUser?.uid}`);
             }}
           >
             <FaUserCircle size="1.4rem" />

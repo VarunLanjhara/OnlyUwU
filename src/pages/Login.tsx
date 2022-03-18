@@ -12,7 +12,7 @@ import { AiOutlineFire } from "react-icons/ai";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import { doc, setDoc, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getFirestore, serverTimestamp } from "firebase/firestore";
 
 const Login = () => {
   useEffect(() => {
@@ -34,6 +34,7 @@ const Login = () => {
           uid: result?.user?.uid,
           pfp: result?.user?.photoURL,
           email: result?.user?.email,
+          createdAt: serverTimestamp(),
         })
           .then(() => {
             setLoading(false);

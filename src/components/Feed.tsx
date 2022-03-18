@@ -9,6 +9,7 @@ type Props = {
   isSearch: boolean;
   isProfile: boolean;
   isFollower: boolean;
+  username?: string;
 };
 
 const Feed = (props: Props) => {
@@ -60,7 +61,7 @@ const Feed = (props: Props) => {
       height="max-content"
     >
       <Heading as="h4" size="md">
-        Your shitty posts
+        Your posts
       </Heading>
       <Post />
       <Post />
@@ -94,7 +95,7 @@ const Feed = (props: Props) => {
       height="max-content"
     >
       <Heading as="h4" size="md">
-        Idiot shitty posts
+        {props?.username} posts
       </Heading>
       <Post />
       <Post />

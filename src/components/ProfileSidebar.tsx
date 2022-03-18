@@ -10,8 +10,15 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { MdShare } from "react-icons/md";
+import { format } from "timeago.js";
 
-const ProfileSidebar = () => {
+type Props = {
+  username: string;
+  bio: string;
+  createdAt: string;
+};
+
+const ProfileSidebar = (props: Props) => {
   return (
     <Flex
       width="100%"
@@ -33,10 +40,10 @@ const ProfileSidebar = () => {
         />
       </Tooltip>
       <Heading as="h3" size="lg" marginRight="2rem" marginLeft="2rem">
-        Idiot
+        {props?.username}
       </Heading>
       <Heading as="h3" size="md" marginRight="2rem" marginLeft="2rem">
-        I like to eat shit
+        {props?.bio}
       </Heading>
       <Flex alignItems="center" width="100%" gap="2rem" justifyContent="center">
         <Flex alignItems="center" flexDirection="column" gap="0.4rem">
@@ -62,7 +69,8 @@ const ProfileSidebar = () => {
         </Button>
       </Flex>
       <Heading marginBottom="1rem" as="h4" size="sm">
-        Joined 69 days ago
+        {/* @ts-ignore */}
+        Joined {format(props?.createdAt?.toDate())}
       </Heading>
     </Flex>
   );
