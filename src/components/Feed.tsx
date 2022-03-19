@@ -21,6 +21,7 @@ type Props = {
   isFollower: boolean;
   username?: string;
   homePosts?: Array<Posts>;
+  explorePosts?: Array<Posts>;
 };
 
 const Feed = (props: Props) => {
@@ -36,10 +37,9 @@ const Feed = (props: Props) => {
       <Heading as="h4" size="md">
         Trending posts
       </Heading>
-      <Post />
-      <Post />
-      <Post />
-      <Post />
+      {props?.explorePosts?.map((post, index) => (
+        <Post key={index} posts={post} />
+      ))}
     </Flex>
   ) : props.isLibrary ? (
     <Flex
