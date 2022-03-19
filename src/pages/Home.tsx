@@ -12,6 +12,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { app } from "../firebase";
+import Loader from "../components/Loader";
 
 const Home = () => {
   const toast = useToast();
@@ -35,6 +36,9 @@ const Home = () => {
   useEffect(() => {
     getPosts();
   }, []);
+  if (posts?.length === 0) {
+    return <Loader />;
+  }
   return (
     <div>
       <Navbar />

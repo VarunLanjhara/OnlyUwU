@@ -13,6 +13,7 @@ import {
   SkeletonCircle,
   SkeletonText,
   Skeleton,
+  Radio,
 } from "@chakra-ui/react";
 import {
   BiDotsVerticalRounded,
@@ -215,6 +216,21 @@ const Post = (props: Props) => {
     }
   };
   const [loadyboi, setLoadyboi] = useState(true);
+  const {
+    isOpen: isReportOpen,
+    onOpen: onReportOpen,
+    onClose: onReportClose,
+  } = useDisclosure();
+  const reportPost = () => {
+    onReportClose();
+    toast({
+      title: "Success",
+      description: "Post reported succesfully",
+      status: "success",
+      duration: 6900,
+      isClosable: true,
+    });
+  };
   return (
     <Flex
       flexDirection="column"
@@ -406,7 +422,11 @@ const Post = (props: Props) => {
             </Heading>
           </Flex>
           <Flex alignItems="center" gap="0.4rem">
-            <IconButton aria-label="Comment" isRound={true}>
+            <IconButton
+              aria-label="Comment"
+              isRound={true}
+              onClick={onReportOpen}
+            >
               {loadyboi ? (
                 <SkeletonCircle />
               ) : (
@@ -414,6 +434,41 @@ const Post = (props: Props) => {
               )}
             </IconButton>
           </Flex>
+          <Modal isOpen={isReportOpen} onClose={onReportClose}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Report Post</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Flex flexDirection="column" gap="1rem">
+                  <Radio colorScheme="red" value="1">
+                    NSFW
+                  </Radio>
+                  <Radio colorScheme="green" value="2" defaultChecked disabled>
+                    Shit post
+                  </Radio>
+                  <Radio colorScheme="red" value="1">
+                    Who are you ?
+                  </Radio>
+                  <Radio colorScheme="red" value="1">
+                    Muck
+                  </Radio>
+                  <Radio colorScheme="red" value="1">
+                    Listen idk what i am doing with my lyfe help
+                  </Radio>
+                  <Radio colorScheme="red" value="1">
+                    Wait what ?
+                  </Radio>
+                </Flex>
+              </ModalBody>
+              <ModalFooter>
+                <Button mr={3} onClick={onReportClose}>
+                  Close
+                </Button>
+                <Button onClick={reportPost}>Report</Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </Flex>
         <IconButton aria-label="Comment" isRound={true}>
           {loadyboi ? (
