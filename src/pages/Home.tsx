@@ -24,7 +24,7 @@ const Home = () => {
   const q = query(postsRef, orderBy("createdAt", "desc"));
   const getPosts = async () => {
     onSnapshot(q, (snapshot) => {
-      const posts = snapshot.docs.map((doc) => ({
+      const posts = snapshot?.docs?.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));

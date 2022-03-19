@@ -10,6 +10,7 @@ import {
   getFirestore,
   query,
   orderBy,
+  limit,
 } from "firebase/firestore";
 import { app } from "../firebase";
 
@@ -20,10 +21,10 @@ const Explore = () => {
   const [posts, setPosts] = useState([]);
   const db = getFirestore(app);
   const postsRef = collection(db, "posts");
-  const q = query(postsRef, orderBy("createdAt", "asc"));
+  const q = query(postsRef, orderBy("createdAt", "asc"), limit(5));
   const getPosts = async () => {
     onSnapshot(q, (snapshot) => {
-      const posts = snapshot.docs.map((doc) => ({
+      const posts = snapshot?.docs?.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));

@@ -220,7 +220,7 @@ const RightSidebar = () => {
               }}
             />
             <Heading as="h5" size="md">
-              Your videos
+              Your posts
             </Heading>
           </Flex>
         ) : (
