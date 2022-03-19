@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Flex,
   Heading,
@@ -6,11 +6,31 @@ import {
   IconButton,
   Image,
   Tooltip,
+  Button,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import { BiDotsVerticalRounded, BiCommentDetail } from "react-icons/bi";
+import {
+  BiDotsVerticalRounded,
+  BiCommentDetail,
+  BiEdit,
+  BiTrash,
+} from "react-icons/bi";
 import { BsHeart, BsBookmark } from "react-icons/bs";
 import { MdOutlineReportProblem } from "react-icons/md";
 import { format } from "timeago.js";
+import { app } from "../firebase";
+import { getAuth } from "firebase/auth";
+import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+} from "@chakra-ui/react";
+import { doc, deleteDoc, getFirestore } from "firebase/firestore";
 
 type Props = {
   posts?: {
@@ -25,6 +45,38 @@ type Props = {
 };
 
 const Post = (props: Props) => {
+  const auth = getAuth(app);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
+  const db = getFirestore(app);
+  const toast = useToast();
+  const [loading, setLoading] = useState(false);
+  const deletePost = async () => {
+    setLoading(true);
+    await deleteDoc(doc(db, "posts", props?.posts?.id as string))
+      .then(() => {
+        setLoading(false);
+        onClose();
+        toast({
+          title: "Success",
+          description: "Post deleted succesfully",
+          status: "success",
+          duration: 6900,
+          isClosable: true,
+        });
+      })
+      .catch((err) => {
+        setLoading(false);
+        onClose();
+        toast({
+          title: "Error",
+          description: err?.message,
+          status: "error",
+          duration: 6900,
+          isClosable: true,
+        });
+      });
+  };
   return (
     <Flex
       flexDirection="column"
@@ -53,10 +105,69 @@ const Post = (props: Props) => {
             {format(props?.posts?.createdAt?.toDate())}
           </Heading>
         </Flex>
-        <IconButton
-          icon={<BiDotsVerticalRounded size="1.6rem" />}
-          aria-label="Shit"
-        />
+        {props?.posts?.userId === auth?.currentUser?.uid ? (
+          <Menu>
+            <MenuButton>
+              <IconButton
+                icon={<BiDotsVerticalRounded size="1.6rem" />}
+                aria-label="Shit"
+              />
+            </MenuButton>
+            <MenuList>
+              <MenuItem gap="0.5rem">
+                <BiEdit size={20} color="#90CDF4" />
+                <Heading as="h4" size="sm" color="#90CDF4">
+                  Edit
+                </Heading>
+              </MenuItem>
+              <MenuItem gap="0.5rem" onClick={onOpen}>
+                <BiTrash size={20} color="red" />
+                <Heading as="h4" size="sm" color="red">
+                  Delete
+                </Heading>
+              </MenuItem>
+            </MenuList>
+            <AlertDialog
+              isOpen={isOpen}
+              //@ts-ignore
+              leastDestructiveRef={cancelRef}
+              onClose={onClose}
+            >
+              <AlertDialogOverlay>
+                <AlertDialogContent>
+                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                    Delete Post
+                  </AlertDialogHeader>
+
+                  <AlertDialogBody>
+                    Are you sure? You can't undo this action afterwards.
+                  </AlertDialogBody>
+
+                  <AlertDialogFooter>
+                    {loading === true ? (
+                      ""
+                    ) : (
+                      //@ts-ignore
+                      <Button ref={cancelRef} onClick={onClose}>
+                        Cancel
+                      </Button>
+                    )}
+                    <Button
+                      colorScheme="red"
+                      onClick={deletePost}
+                      ml={3}
+                      isLoading={loading}
+                    >
+                      Delete
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialogOverlay>
+            </AlertDialog>
+          </Menu>
+        ) : (
+          <></>
+        )}
       </Flex>
       <Image src={props?.posts?.image} alt="" borderRadius="lg" />
       <Heading as="h5" size="sm">
