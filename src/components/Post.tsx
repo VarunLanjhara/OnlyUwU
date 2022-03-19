@@ -10,6 +10,9 @@ import {
   useDisclosure,
   useToast,
   Input,
+  SkeletonCircle,
+  SkeletonText,
+  Skeleton,
 } from "@chakra-ui/react";
 import {
   BiDotsVerticalRounded,
@@ -69,6 +72,7 @@ type Props = {
 };
 
 const Post = (props: Props) => {
+  console.log(props?.posts);
   const auth = getAuth(app);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -210,6 +214,7 @@ const Post = (props: Props) => {
       );
     }
   };
+  const [loadyboi, setLoadyboi] = useState(true);
   return (
     <Flex
       flexDirection="column"
@@ -222,7 +227,11 @@ const Post = (props: Props) => {
     >
       <Flex flexDirection="row" width="100%" alignItems="center">
         <Tooltip label={props?.posts?.userName} openDelay={200}>
-          <Avatar cursor="pointer" src={props?.posts?.userPfp} />
+          {loadyboi ? (
+            <SkeletonCircle borderRadius={"100%"} height="12" width="14" />
+          ) : (
+            <Avatar cursor="pointer" src={props?.posts?.userPfp} />
+          )}
         </Tooltip>
         <Flex
           flexDirection="column"
@@ -230,13 +239,21 @@ const Post = (props: Props) => {
           marginLeft="1rem"
           gap="0.2rem"
         >
-          <Heading as="h3" size="md">
-            {props?.posts?.userName}
-          </Heading>
-          <Heading as="h4" size="sm" color="gray.600">
-            {/* @ts-ignore */}
-            {format(props?.posts?.createdAt?.toDate())}
-          </Heading>
+          {loadyboi ? (
+            <Skeleton width="20rem" height="1rem" />
+          ) : (
+            <Heading as="h3" size="md">
+              {props?.posts?.userName}
+            </Heading>
+          )}
+          {loadyboi ? (
+            <Skeleton width="15rem" height="1rem" />
+          ) : (
+            <Heading as="h4" size="sm" color="gray.600">
+              {/* @ts-ignore */}
+              {format(props?.posts?.createdAt?.toDate())}
+            </Heading>
+          )}
         </Flex>
         {props?.posts?.userId === auth?.currentUser?.uid ? (
           <Menu>
@@ -346,15 +363,31 @@ const Post = (props: Props) => {
           <></>
         )}
       </Flex>
-      <Image src={props?.posts?.image} alt="" borderRadius="lg" />
-      <Heading as="h5" size="sm">
-        {props?.posts?.caption}
-      </Heading>
+      {loadyboi ? <Skeleton width="100%" height="20rem" /> : ""}
+      <Image
+        src={props?.posts?.image}
+        alt=""
+        borderRadius="lg"
+        onLoad={() => {
+          setLoadyboi(false);
+        }}
+      />
+      {loadyboi ? (
+        <Skeleton height="1rem" width="24rem" />
+      ) : (
+        <Heading as="h5" size="sm">
+          {props?.posts?.caption}
+        </Heading>
+      )}
       <Flex alignItems="center" justifyContent="space-between">
         <Flex gap="1.3rem">
           <Flex alignItems="center" gap="0.4rem">
             <IconButton aria-label="Like" isRound={true}>
-              <BsHeart size="1.5rem" cursor="pointer" />
+              {loadyboi ? (
+                <SkeletonCircle />
+              ) : (
+                <BsHeart size="1.5rem" cursor="pointer" />
+              )}
             </IconButton>
             <Heading as="h5" size="sm" color="gray.600">
               0
@@ -362,7 +395,11 @@ const Post = (props: Props) => {
           </Flex>
           <Flex alignItems="center" gap="0.4rem">
             <IconButton aria-label="Comment" isRound={true}>
-              <BiCommentDetail size="1.5rem" cursor="pointer" />
+              {loadyboi ? (
+                <SkeletonCircle />
+              ) : (
+                <BiCommentDetail size="1.5rem" cursor="pointer" />
+              )}
             </IconButton>
             <Heading as="h5" size="sm" color="gray.600">
               0
@@ -370,25 +407,37 @@ const Post = (props: Props) => {
           </Flex>
           <Flex alignItems="center" gap="0.4rem">
             <IconButton aria-label="Comment" isRound={true}>
-              <MdOutlineReportProblem size="1.5rem" cursor="pointer" />
+              {loadyboi ? (
+                <SkeletonCircle />
+              ) : (
+                <MdOutlineReportProblem size="1.5rem" cursor="pointer" />
+              )}
             </IconButton>
           </Flex>
         </Flex>
         <IconButton aria-label="Comment" isRound={true}>
-          <BsBookmark size="1.5rem" cursor="pointer" />
+          {loadyboi ? (
+            <SkeletonCircle />
+          ) : (
+            <BsBookmark size="1.5rem" cursor="pointer" />
+          )}
         </IconButton>
       </Flex>
-      <Heading
-        as="h5"
-        size="sm"
-        color="gray.500"
-        cursor="pointer"
-        _hover={{
-          textDecorationLine: "underline",
-        }}
-      >
-        View all comments
-      </Heading>
+      {loadyboi ? (
+        <Skeleton height="1rem" width="16rem" />
+      ) : (
+        <Heading
+          as="h5"
+          size="sm"
+          color="gray.500"
+          cursor="pointer"
+          _hover={{
+            textDecorationLine: "underline",
+          }}
+        >
+          View all comments
+        </Heading>
+      )}
     </Flex>
   );
 };

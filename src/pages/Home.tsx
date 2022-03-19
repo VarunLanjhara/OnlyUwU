@@ -28,7 +28,7 @@ const Home = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      ///@ts-ignore
+      //@ts-ignore
       setPosts(posts);
     });
   };
