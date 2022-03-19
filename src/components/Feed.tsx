@@ -2,6 +2,16 @@ import { Avatar, Divider, Flex, Heading, Tag, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import Post from "./Post";
 
+type Posts = {
+  caption: string;
+  createdAt: string;
+  image: string;
+  userName: string;
+  userId: string;
+  userPfp: string;
+  id: string;
+};
+
 type Props = {
   isExplore: boolean;
   isLibrary: boolean;
@@ -10,6 +20,7 @@ type Props = {
   isProfile: boolean;
   isFollower: boolean;
   username?: string;
+  homePosts?: Array<Posts>;
 };
 
 const Feed = (props: Props) => {
@@ -162,10 +173,9 @@ const Feed = (props: Props) => {
         <Tag>Write</Tag>
         <Tag>Lol</Tag>
       </Flex>
-      <Post />
-      <Post />
-      <Post />
-      <Post />
+      {props?.homePosts?.map((post, index) => (
+        <Post key={index} posts={post} />
+      ))}
     </Flex>
   );
 };

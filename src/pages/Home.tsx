@@ -1,14 +1,39 @@
 import { Grid, useToast } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import RightSidebar from "../components/RightSidebar";
 import Feed from "../components/Feed";
 import LeftSidebar from "../components/LeftSidebar";
+import {
+  collection,
+  onSnapshot,
+  getFirestore,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { app } from "../firebase";
 
 const Home = () => {
   const toast = useToast();
+  const db = getFirestore(app);
   useEffect(() => {
     document.title = "OnlyUwU";
+  }, []);
+  const [posts, setPosts] = useState([]);
+  const postsRef = collection(db, "posts");
+  const q = query(postsRef, orderBy("createdAt", "desc"));
+  const getPosts = async () => {
+    onSnapshot(q, (snapshot) => {
+      const posts = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      ///@ts-ignore
+      setPosts(posts);
+    });
+  };
+  useEffect(() => {
+    getPosts();
   }, []);
   return (
     <div>
@@ -27,6 +52,7 @@ const Home = () => {
           isSearch={false}
           isProfile={false}
           isFollower={false}
+          homePosts={posts}
         />
         <LeftSidebar />
       </Grid>

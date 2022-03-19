@@ -1,10 +1,30 @@
 import React from "react";
-import { Flex, Heading, Avatar, IconButton, Image } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  Avatar,
+  IconButton,
+  Image,
+  Tooltip,
+} from "@chakra-ui/react";
 import { BiDotsVerticalRounded, BiCommentDetail } from "react-icons/bi";
 import { BsHeart, BsBookmark } from "react-icons/bs";
 import { MdOutlineReportProblem } from "react-icons/md";
+import { format } from "timeago.js";
 
-const Post = () => {
+type Props = {
+  posts?: {
+    caption: string;
+    createdAt: string;
+    image: string;
+    userName: string;
+    userId: string;
+    userPfp: string;
+    id: string;
+  };
+};
+
+const Post = (props: Props) => {
   return (
     <Flex
       flexDirection="column"
@@ -16,7 +36,9 @@ const Post = () => {
       marginBottom="0.7rem"
     >
       <Flex flexDirection="row" width="100%" alignItems="center">
-        <Avatar cursor="pointer" />
+        <Tooltip label={props?.posts?.userName} openDelay={200}>
+          <Avatar cursor="pointer" src={props?.posts?.userPfp} />
+        </Tooltip>
         <Flex
           flexDirection="column"
           width="100%"
@@ -24,10 +46,11 @@ const Post = () => {
           gap="0.2rem"
         >
           <Heading as="h3" size="md">
-            Varun
+            {props?.posts?.userName}
           </Heading>
           <Heading as="h4" size="sm" color="gray.600">
-            2 hours ago
+            {/* @ts-ignore */}
+            {format(props?.posts?.createdAt?.toDate())}
           </Heading>
         </Flex>
         <IconButton
@@ -35,12 +58,9 @@ const Post = () => {
           aria-label="Shit"
         />
       </Flex>
-      <Image src="/catboi.jpeg" alt="" borderRadius="lg" />
+      <Image src={props?.posts?.image} alt="" borderRadius="lg" />
       <Heading as="h5" size="sm">
-        I am dumb piece of shit help god lets gooooo I am dumb piece of shit
-        help god lets gooooo I am dumb piece of shit help god lets gooooo I am
-        dumb piece of shit help god lets gooooo I am dumb piece of shit help god
-        lets gooooo
+        {props?.posts?.caption}
       </Heading>
       <Flex alignItems="center" justifyContent="space-between">
         <Flex gap="1.3rem">
@@ -61,13 +81,13 @@ const Post = () => {
             </Heading>
           </Flex>
           <Flex alignItems="center" gap="0.4rem">
-          <IconButton aria-label="Comment" isRound={true}>
-            <MdOutlineReportProblem size="1.5rem" cursor="pointer" />
+            <IconButton aria-label="Comment" isRound={true}>
+              <MdOutlineReportProblem size="1.5rem" cursor="pointer" />
             </IconButton>
           </Flex>
         </Flex>
         <IconButton aria-label="Comment" isRound={true}>
-        <BsBookmark size="1.5rem" cursor="pointer" />
+          <BsBookmark size="1.5rem" cursor="pointer" />
         </IconButton>
       </Flex>
       <Heading
