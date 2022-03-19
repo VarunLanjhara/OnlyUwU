@@ -23,6 +23,7 @@ type Props = {
   homePosts?: Array<Posts>;
   explorePosts?: Array<Posts>;
   yourPosts?: Array<Posts>;
+  searchPosts?: Array<Posts>;
 };
 
 const Feed = (props: Props) => {
@@ -91,10 +92,9 @@ const Feed = (props: Props) => {
       <Heading as="h4" size="md">
         Search results
       </Heading>
-      <Post />
-      <Post />
-      <Post />
-      <Post />
+      {props?.searchPosts?.map((post, index) => (
+        <Post key={index} posts={post} />
+      ))}
     </Flex>
   ) : props?.isProfile ? (
     <Flex

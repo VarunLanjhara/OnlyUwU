@@ -5,7 +5,17 @@ import RightSidebar from "../components/RightSidebar";
 import Feed from "../components/Feed";
 import ProfileSidebar from "../components/ProfileSidebar";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, getFirestore, DocumentData } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getFirestore,
+  DocumentData,
+  collection,
+  orderBy,
+  query,
+  onSnapshot,
+  where,
+} from "firebase/firestore";
 import { app } from "../firebase";
 import Loader from "../components/Loader";
 
@@ -35,6 +45,23 @@ const Profile = () => {
   useEffect(() => {
     getProfile();
   }, [uuid]);
+  // const [posts, setPosts] = useState([]);
+  // console.log(posts);
+  // const postsRef = collection(db, "posts");
+  // const q = query(postsRef, where("userId", "==", profile?.uid));
+  // const getPosts = async () => {
+  //   onSnapshot(q, (snapshot) => {
+  //     const posts = snapshot?.docs?.map((doc) => ({
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     }));
+  //     //@ts-ignore
+  //     setPosts(posts);
+  //   });
+  // };
+  // useEffect(() => {
+  //   getPosts();
+  // }, [profile]);
   if (profile === undefined) {
     return <Loader />;
   }

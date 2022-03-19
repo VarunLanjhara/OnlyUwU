@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
   Heading,
@@ -21,7 +21,7 @@ import {
   BiEdit,
   BiTrash,
 } from "react-icons/bi";
-import { BsHeart, BsBookmark } from "react-icons/bs";
+import { BsHeart, BsBookmark, BsHeartFill } from "react-icons/bs";
 import { MdOutlineReportProblem } from "react-icons/md";
 import { format } from "timeago.js";
 import { app } from "../firebase";
@@ -42,6 +42,7 @@ import {
   setDoc,
   collection,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 import {
   Modal,
@@ -231,6 +232,60 @@ const Post = (props: Props) => {
       isClosable: true,
     });
   };
+  const [likes, setLikes] = useState([]);
+  useEffect(() => {
+    onSnapshot(
+      collection(db, "posts", props?.posts?.id as string, "likes"),
+      //@ts-ignore
+      (snapshot) => setLikes(snapshot.docs)
+    );
+  }, [db, props?.posts?.id]);
+  const [liked, setLiked] = useState(false);
+  useEffect(() => {
+    setLiked(
+      likes.findIndex((like: any) => like?.id === auth?.currentUser?.uid) !== -1
+    );
+  }, [likes]);
+  const likePost = async () => {
+    if (liked) {
+      await deleteDoc(
+        doc(
+          db,
+          "posts",
+          props?.posts?.id as string,
+          "likes",
+          auth?.currentUser?.uid as string
+        )
+      );
+      toast({
+        title: "Success",
+        description: "Like removed succesfully",
+        status: "success",
+        duration: 250,
+        isClosable: true,
+      });
+    } else {
+      await setDoc(
+        doc(
+          db,
+          "posts",
+          props?.posts?.id as string,
+          "likes",
+          auth?.currentUser?.uid as string
+        ),
+        {
+          username: auth?.currentUser?.displayName,
+        }
+      );
+      toast({
+        title: "Success",
+        description: "Like added succesfully",
+        status: "success",
+        duration: 250,
+        isClosable: true,
+      });
+    }
+  };
   return (
     <Flex
       flexDirection="column"
@@ -398,15 +453,17 @@ const Post = (props: Props) => {
       <Flex alignItems="center" justifyContent="space-between">
         <Flex gap="1.3rem">
           <Flex alignItems="center" gap="0.4rem">
-            <IconButton aria-label="Like" isRound={true}>
+            <IconButton aria-label="Like" isRound={true} onClick={likePost}>
               {loadyboi ? (
                 <SkeletonCircle />
+              ) : liked ? (
+                <BsHeartFill size="1.5rem" cursor="pointer" />
               ) : (
                 <BsHeart size="1.5rem" cursor="pointer" />
               )}
             </IconButton>
             <Heading as="h5" size="sm" color="gray.600">
-              0
+              {likes?.length}
             </Heading>
           </Flex>
           <Flex alignItems="center" gap="0.4rem">
