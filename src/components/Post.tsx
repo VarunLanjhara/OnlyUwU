@@ -50,6 +50,8 @@ import {
   onSnapshot,
   getDoc,
   addDoc,
+  DocumentData,
+  query,
 } from "firebase/firestore";
 import {
   Modal,
@@ -417,6 +419,12 @@ const Post = (props: Props) => {
         });
     }
   };
+  type CommentType = {
+    comment: string;
+    userName: string;
+    userPfp: string;
+    userId: string;
+  };
   const { colorMode } = useColorMode();
   const [comment, setComment] = useState("");
   const [commentLoading, setcommentLoading] = useState(false);
@@ -453,7 +461,7 @@ const Post = (props: Props) => {
         });
       });
   };
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<DocumentData | undefined>(undefined);
   useEffect(() => {
     onSnapshot(
       collection(db, "posts", props?.posts?.id as string, "comments"),
@@ -462,7 +470,6 @@ const Post = (props: Props) => {
           id: doc?.id,
           ...doc?.data(),
         }));
-        //@ts-ignore
         setComments(commentsboi);
       }
     );
@@ -750,7 +757,7 @@ const Post = (props: Props) => {
           <DrawerCloseButton />
           <DrawerHeader>Comments</DrawerHeader>
           <DrawerBody>
-            {comments?.map((comment) => (
+            {comments?.map((comment: CommentType) => (
               <Flex
                 width="100%"
                 gap="0.6rem"
@@ -766,7 +773,7 @@ const Post = (props: Props) => {
                   <Heading as="h5" size="md">
                     {comment?.userName}
                   </Heading>
-                  <Heading as="h5" size="sm" color="gray.600">
+                  <Heading as="h5" size="sm" color="gray.400">
                     {comment?.comment}
                   </Heading>
                 </Flex>
