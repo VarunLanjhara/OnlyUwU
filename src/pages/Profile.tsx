@@ -71,6 +71,8 @@ const Profile = () => {
           username={profile?.username}
           bio={profile?.bio}
           createdAt={profile?.createdAt}
+          pfp={profile?.pfp}
+          uid={profile?.uid}
         />
       </Grid>
     </div>

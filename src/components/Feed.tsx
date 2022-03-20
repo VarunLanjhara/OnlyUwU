@@ -104,10 +104,6 @@ const Feed = (props: Props) => {
       <Heading as="h4" size="md">
         {props?.username} posts
       </Heading>
-      <Post />
-      <Post />
-      <Post />
-      <Post />
     </Flex>
   ) : props?.isFollower ? (
     <Flex

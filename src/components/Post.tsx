@@ -259,13 +259,14 @@ const Post = (props: Props) => {
     onSnapshot(
       collection(db, "posts", props?.posts?.id as string, "likes"),
       //@ts-ignore
-      (snapshot) => setLikes(snapshot.docs)
+      (snapshot) => setLikes(snapshot?.docs)
     );
   }, [db, props?.posts?.id]);
   const [liked, setLiked] = useState(false);
   useEffect(() => {
     setLiked(
-      likes.findIndex((like: any) => like?.id === auth?.currentUser?.uid) !== -1
+      likes?.findIndex((like: any) => like?.id === auth?.currentUser?.uid) !==
+        -1
     );
   }, [likes]);
   const likePost = async () => {
