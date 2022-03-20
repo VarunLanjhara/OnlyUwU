@@ -21,7 +21,12 @@ import {
   BiEdit,
   BiTrash,
 } from "react-icons/bi";
-import { BsHeart, BsBookmark, BsHeartFill } from "react-icons/bs";
+import {
+  BsHeart,
+  BsBookmark,
+  BsHeartFill,
+  BsBookmarkFill,
+} from "react-icons/bs";
 import { MdOutlineReportProblem } from "react-icons/md";
 import { format } from "timeago.js";
 import { app } from "../firebase";
@@ -43,6 +48,7 @@ import {
   collection,
   serverTimestamp,
   onSnapshot,
+  getDoc,
 } from "firebase/firestore";
 import {
   Modal,
@@ -256,14 +262,25 @@ const Post = (props: Props) => {
           "likes",
           auth?.currentUser?.uid as string
         )
-      );
-      toast({
-        title: "Success",
-        description: "Like removed succesfully",
-        status: "success",
-        duration: 250,
-        isClosable: true,
-      });
+      )
+        .then(() => {
+          toast({
+            title: "Success",
+            description: "Like removed succesfully",
+            status: "success",
+            duration: 250,
+            isClosable: true,
+          });
+        })
+        .catch((err) => {
+          toast({
+            title: "Error",
+            description: err?.message,
+            status: "error",
+            duration: 250,
+            isClosable: true,
+          });
+        });
     } else {
       await setDoc(
         doc(
@@ -276,14 +293,110 @@ const Post = (props: Props) => {
         {
           username: auth?.currentUser?.displayName,
         }
-      );
-      toast({
-        title: "Success",
-        description: "Like added succesfully",
-        status: "success",
-        duration: 250,
-        isClosable: true,
-      });
+      )
+        .then(() => {
+          toast({
+            title: "Success",
+            description: "Like added succesfully",
+            status: "success",
+            duration: 250,
+            isClosable: true,
+          });
+        })
+        .catch((err) => {
+          toast({
+            title: "Error",
+            description: err?.message,
+            status: "error",
+            duration: 250,
+            isClosable: true,
+          });
+        });
+    }
+  };
+  const [saved, setSaved] = useState(false);
+  const getSavedPosts = async () => {
+    const docboi = await getDoc(
+      doc(
+        db,
+        "users",
+        auth?.currentUser?.uid as string,
+        "savedposts",
+        props?.posts?.id as string
+      )
+    );
+    if (docboi.exists()) {
+      setSaved(true);
+    } else {
+      setSaved(false);
+    }
+  };
+  useEffect(() => {
+    getSavedPosts();
+  }, [saved, auth?.currentUser?.uid, props?.posts?.id, db]);
+  const savePost = async () => {
+    if (saved) {
+      await deleteDoc(
+        doc(
+          db,
+          "users",
+          auth?.currentUser?.uid as string,
+          "savedposts",
+          props?.posts?.id as string
+        )
+      ).then(() => {
+        setSaved(false);
+        toast({
+          title: "Success",
+          description: "Post unsaved succesfully",
+          status: "success",
+          duration: 250,
+          isClosable: true,
+        });
+      }).catch((err) => {
+        toast({
+          title: "Error",
+          description: err?.message,
+          status: "error",
+          duration: 250,
+          isClosable: true,
+        });
+      })
+    } else {
+      await setDoc(
+        doc(
+          db,
+          "users",
+          auth?.currentUser?.uid as string,
+          "savedposts",
+          props?.posts?.id as string
+        ),
+        {
+          caption: props?.posts?.caption,
+          image: props?.posts?.image,
+          createdAt: props?.posts?.createdAt,
+          userId: props?.posts?.userId,
+          userName: props?.posts?.userName,
+          userPfp: props?.posts?.userPfp,
+        }
+      ).then(() => {
+        setSaved(true);
+        toast({
+          title: "Success",
+          description: "Post saved succesfully",
+          status: "success",
+          duration: 250,
+          isClosable: true,
+        });
+      }).catch((err) => {
+        toast({
+          title: "Error",
+          description: err?.message,
+          status: "error",
+          duration: 250,
+          isClosable: true,
+        });
+      })
     }
   };
   return (
@@ -527,9 +640,11 @@ const Post = (props: Props) => {
             </ModalContent>
           </Modal>
         </Flex>
-        <IconButton aria-label="Comment" isRound={true}>
+        <IconButton aria-label="Comment" isRound={true} onClick={savePost}>
           {loadyboi ? (
             <SkeletonCircle />
+          ) : saved ? (
+            <BsBookmarkFill size="1.5rem" cursor="pointer" />
           ) : (
             <BsBookmark size="1.5rem" cursor="pointer" />
           )}

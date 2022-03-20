@@ -99,25 +99,6 @@ const LeftSidebar = () => {
               </Heading>
             </Flex>
           </Flex>
-          <Flex
-            gap="0.4rem"
-            _hover={{
-              cursor: "pointer",
-              backgroundColor: colorMode === "light" ? "#efefef" : "#20242a",
-            }}
-          >
-            <Flex flexDirection="row" gap="0.6rem">
-              <Avatar cursor="pointer" />
-            </Flex>
-            <Flex flexDirection="column" gap="0.4rem">
-              <Heading as="h5" size="sm">
-                Varun
-              </Heading>
-              <Heading as="h5" size="xs" color="gray.600">
-                I am so dumb help me and eat shit lol
-              </Heading>
-            </Flex>
-          </Flex>
         </Flex>
       </Flex>
     </Flex>
