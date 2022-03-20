@@ -11,9 +11,9 @@ import {
   useToast,
   Input,
   SkeletonCircle,
-  SkeletonText,
   Skeleton,
   Radio,
+  useColorMode,
 } from "@chakra-ui/react";
 import {
   BiDotsVerticalRounded,
@@ -49,6 +49,7 @@ import {
   serverTimestamp,
   onSnapshot,
   getDoc,
+  addDoc,
 } from "firebase/firestore";
 import {
   Modal,
@@ -66,6 +67,15 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+} from "@chakra-ui/react";
 
 type Props = {
   posts?: {
@@ -80,7 +90,11 @@ type Props = {
 };
 
 const Post = (props: Props) => {
-  console.log(props?.posts);
+  const {
+    isOpen: isCommentOpen,
+    onOpen: onCommentOpen,
+    onClose: onCommentClose,
+  } = useDisclosure();
   const auth = getAuth(app);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -344,24 +358,26 @@ const Post = (props: Props) => {
           "savedposts",
           props?.posts?.id as string
         )
-      ).then(() => {
-        setSaved(false);
-        toast({
-          title: "Success",
-          description: "Post unsaved succesfully",
-          status: "success",
-          duration: 250,
-          isClosable: true,
+      )
+        .then(() => {
+          setSaved(false);
+          toast({
+            title: "Success",
+            description: "Post unsaved succesfully",
+            status: "success",
+            duration: 250,
+            isClosable: true,
+          });
+        })
+        .catch((err) => {
+          toast({
+            title: "Error",
+            description: err?.message,
+            status: "error",
+            duration: 250,
+            isClosable: true,
+          });
         });
-      }).catch((err) => {
-        toast({
-          title: "Error",
-          description: err?.message,
-          status: "error",
-          duration: 250,
-          isClosable: true,
-        });
-      })
     } else {
       await setDoc(
         doc(
@@ -379,16 +395,55 @@ const Post = (props: Props) => {
           userName: props?.posts?.userName,
           userPfp: props?.posts?.userPfp,
         }
-      ).then(() => {
-        setSaved(true);
+      )
+        .then(() => {
+          setSaved(true);
+          toast({
+            title: "Success",
+            description: "Post saved succesfully",
+            status: "success",
+            duration: 250,
+            isClosable: true,
+          });
+        })
+        .catch((err) => {
+          toast({
+            title: "Error",
+            description: err?.message,
+            status: "error",
+            duration: 250,
+            isClosable: true,
+          });
+        });
+    }
+  };
+  const { colorMode } = useColorMode();
+  const [comment, setComment] = useState("");
+  const [commentLoading, setcommentLoading] = useState(false);
+  const commentBoi = async () => {
+    setcommentLoading(true);
+    await addDoc(
+      collection(db, "posts", props?.posts?.id as string, "comments"),
+      {
+        comment: comment,
+        userId: auth?.currentUser?.uid,
+        userPfp: auth?.currentUser?.photoURL,
+        userName: auth?.currentUser?.displayName,
+      }
+    )
+      .then(() => {
+        setcommentLoading(false);
+        setComment("");
         toast({
           title: "Success",
-          description: "Post saved succesfully",
+          description: "Comment added succesfully",
           status: "success",
           duration: 250,
           isClosable: true,
         });
-      }).catch((err) => {
+      })
+      .catch((err) => {
+        setcommentLoading(false);
         toast({
           title: "Error",
           description: err?.message,
@@ -396,9 +451,22 @@ const Post = (props: Props) => {
           duration: 250,
           isClosable: true,
         });
-      })
-    }
+      });
   };
+  const [comments, setComments] = useState([]);
+  useEffect(() => {
+    onSnapshot(
+      collection(db, "posts", props?.posts?.id as string, "comments"),
+      (snapshot) => {
+        const commentsboi = snapshot?.docs?.map((doc) => ({
+          id: doc?.id,
+          ...doc?.data(),
+        }));
+        //@ts-ignore
+        setComments(commentsboi);
+      }
+    );
+  }, []);
   return (
     <Flex
       flexDirection="column"
@@ -580,7 +648,11 @@ const Post = (props: Props) => {
             </Heading>
           </Flex>
           <Flex alignItems="center" gap="0.4rem">
-            <IconButton aria-label="Comment" isRound={true}>
+            <IconButton
+              aria-label="Comment"
+              isRound={true}
+              onClick={onCommentOpen}
+            >
               {loadyboi ? (
                 <SkeletonCircle />
               ) : (
@@ -588,7 +660,7 @@ const Post = (props: Props) => {
               )}
             </IconButton>
             <Heading as="h5" size="sm" color="gray.600">
-              0
+              {comments?.length}
             </Heading>
           </Flex>
           <Flex alignItems="center" gap="0.4rem">
@@ -654,6 +726,7 @@ const Post = (props: Props) => {
         <Skeleton height="1rem" width="16rem" />
       ) : (
         <Heading
+          onClick={onCommentOpen}
           as="h5"
           size="sm"
           color="gray.500"
@@ -665,6 +738,60 @@ const Post = (props: Props) => {
           View all comments
         </Heading>
       )}
+      {/* comment modal open here */}
+      <Drawer
+        isOpen={isCommentOpen}
+        placement="right"
+        onClose={onCommentClose}
+        size="full"
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>Comments</DrawerHeader>
+          <DrawerBody>
+            {comments?.map((comment) => (
+              <Flex
+                width="100%"
+                gap="0.6rem"
+                cursor="pointer"
+                _hover={{
+                  backgroundColor:
+                    colorMode === "light" ? "#efefef" : "#20242a",
+                }}
+                padding="1rem"
+              >
+                <Avatar src={comment?.userPfp} />
+                <Flex flexDirection="column" gap="0.6rem" alignItems="start">
+                  <Heading as="h5" size="md">
+                    {comment?.userName}
+                  </Heading>
+                  <Heading as="h5" size="sm" color="gray.600">
+                    {comment?.comment}
+                  </Heading>
+                </Flex>
+              </Flex>
+            ))}
+          </DrawerBody>
+          <DrawerFooter gap="1rem" alignItems="center">
+            <Avatar />
+            <Input
+              placeholder="Type here..."
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setComment(e?.target?.value);
+              }}
+              value={comment}
+            />
+            {comment?.length > 0 && comment?.length <= 100 ? (
+              <Button onClick={commentBoi}>Send</Button>
+            ) : (
+              <Button disabled isLoading={commentLoading}>
+                Send
+              </Button>
+            )}
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </Flex>
   );
 };
