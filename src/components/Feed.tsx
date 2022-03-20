@@ -24,6 +24,7 @@ type Props = {
   explorePosts?: Array<Posts>;
   yourPosts?: Array<Posts>;
   searchPosts?: Array<Posts>;
+  libraryPosts?: Array<Posts>;
 };
 
 const Feed = (props: Props) => {
@@ -53,16 +54,11 @@ const Feed = (props: Props) => {
       height="max-content"
     >
       <Heading as="h4" size="md">
-        Liked posts
-      </Heading>
-      <Post />
-      <Post />
-      <Divider />
-      <Heading as="h4" size="md">
         Saved posts
       </Heading>
-      <Post />
-      <Post />
+      {props?.libraryPosts?.map((post, index) => (
+        <Post key={index} posts={post} />
+      ))}
     </Flex>
   ) : props?.isYourPosts ? (
     <Flex
