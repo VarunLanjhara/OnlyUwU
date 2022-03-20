@@ -1,4 +1,13 @@
-import { Avatar, Divider, Flex, Heading, Tag, Tooltip } from "@chakra-ui/react";
+import {
+  Avatar,
+  Divider,
+  Flex,
+  Heading,
+  Image,
+  Tag,
+  Tooltip,
+  useToast,
+} from "@chakra-ui/react";
 import React from "react";
 import Post from "./Post";
 
@@ -25,9 +34,11 @@ type Props = {
   yourPosts?: Array<Posts>;
   searchPosts?: Array<Posts>;
   libraryPosts?: Array<Posts>;
+  profilePosts?: Array<Posts>;
 };
 
 const Feed = (props: Props) => {
+  const toast = useToast();
   return props?.isExplore ? (
     <Flex
       flexDirection="column"
@@ -104,6 +115,25 @@ const Feed = (props: Props) => {
       <Heading as="h4" size="md">
         {props?.username} posts
       </Heading>
+      {props?.profilePosts?.length === 0 ? (
+        <Flex
+          width="100%"
+          justifyContent="center"
+          alignItems="center"
+          height="80vh"
+          flexDirection="column"
+          gap="1rem"
+        >
+          <Image alt="" src="/ohno.png" width="50%" height="50%" />
+          <Heading as="h4" size="md" color="gray.500">
+            Oh noooooo this idiot has no posts
+          </Heading>
+        </Flex>
+      ) : (
+        props?.profilePosts?.map((post, index) => (
+          <Post key={index} posts={post} />
+        ))
+      )}
     </Flex>
   ) : props?.isFollower ? (
     <Flex

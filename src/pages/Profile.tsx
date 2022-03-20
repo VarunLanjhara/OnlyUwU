@@ -44,6 +44,22 @@ const Profile = () => {
   };
   useEffect(() => {
     getProfile();
+  }, [uuid, db]);
+  const [posts, setPosts] = useState([]);
+  const postsRef = collection(db, "posts");
+  const q = query(postsRef, where("userId", "==", uuid));
+  const getPosts = async () => {
+    onSnapshot(q, (snapshot) => {
+      const posts = snapshot?.docs?.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      //@ts-ignore
+      setPosts(posts);
+    });
+  };
+  useEffect(() => {
+    getPosts();
   }, [uuid]);
   if (profile === undefined) {
     return <Loader />;
@@ -66,6 +82,7 @@ const Profile = () => {
           isProfile={true}
           isFollower={false}
           username={profile?.username}
+          profilePosts={posts}
         />
         <ProfileSidebar
           username={profile?.username}
@@ -73,6 +90,7 @@ const Profile = () => {
           createdAt={profile?.createdAt}
           pfp={profile?.pfp}
           uid={profile?.uid}
+          postsLength = {posts?.length}
         />
       </Grid>
     </div>

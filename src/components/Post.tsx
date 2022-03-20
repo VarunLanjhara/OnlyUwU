@@ -52,6 +52,7 @@ import {
   addDoc,
   DocumentData,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import {
   Modal,
@@ -118,7 +119,7 @@ const Post = (props: Props) => {
           title: "Success",
           description: "Post deleted succesfully",
           status: "success",
-          duration: 6900,
+          duration: 1000,
           isClosable: true,
         });
       })
@@ -129,7 +130,7 @@ const Post = (props: Props) => {
           title: "Error",
           description: err?.message,
           status: "error",
-          duration: 6900,
+          duration: 1000,
           isClosable: true,
         });
       });
@@ -145,35 +146,36 @@ const Post = (props: Props) => {
     //@ts-ignore
     setImage(e?.target?.files[0]);
   };
+  const [updateLoading, setUpdateLoading] = useState(false);
   const updatePost = async () => {
+    setUpdateLoading(true);
     if (image === props?.posts?.image) {
       //@ts-ignore
-      await setDoc(doc(db, "posts", props?.posts?.id), {
+      await updateDoc(doc(db, "posts", props?.posts?.id), {
         caption: caption,
         image: image,
-        createdAt: serverTimestamp(),
-        userId: auth?.currentUser?.uid,
-        userName: auth?.currentUser?.displayName,
-        userPfp: auth?.currentUser?.photoURL,
       })
         .then(() => {
+          setUpdateLoading(false);
           toast({
             title: "Success",
             description: "Post updated succesfully",
             status: "success",
-            duration: 6900,
+            duration: 1000,
             isClosable: true,
           });
-          navigate("/");
+          onEditClose();
         })
         .catch((err) => {
+          setUpdateLoading(false);
           toast({
             title: "Error",
             description: err?.message,
             status: "error",
-            duration: 6900,
+            duration: 1000,
             isClosable: true,
           });
+          onEditClose();
         });
     } else {
       //@ts-ignore
@@ -184,11 +186,12 @@ const Post = (props: Props) => {
         "state_changed",
         (snapshot) => {},
         (err) => {
+          setUpdateLoading(false);
           toast({
             title: "Error",
             description: err?.message,
             status: "error",
-            duration: 6900,
+            duration: 1000,
             isClosable: true,
           });
         },
@@ -196,41 +199,41 @@ const Post = (props: Props) => {
           getDownloadURL(uploadTask.snapshot.ref)
             .then(async (url) => {
               //@ts-ignore
-              await setDoc(doc(db, "posts", props?.posts?.id), {
+              await updateDoc(doc(db, "posts", props?.posts?.id), {
                 caption: caption,
                 image: url,
-                createdAt: serverTimestamp(),
-                userId: auth?.currentUser?.uid,
-                userName: auth?.currentUser?.displayName,
-                userPfp: auth?.currentUser?.photoURL,
               })
                 .then(() => {
+                  setUpdateLoading(false);
+                  onEditClose();
                   toast({
                     title: "Success",
                     description: "Post updated succesfully",
                     status: "success",
-                    duration: 6900,
+                    duration: 1000,
                     isClosable: true,
                   });
-                  navigate("/");
                 })
                 .catch((err) => {
+                  setUpdateLoading(false);
+                  onEditClose();
                   toast({
                     title: "Error",
                     description: err?.message,
                     status: "error",
-                    duration: 6900,
+                    duration: 1000,
                     isClosable: true,
                   });
                 });
             })
             .catch((err) => {
-              setLoading(false);
+              onEditClose();
+              setUpdateLoading(false);
               toast({
                 title: "Error",
                 description: err?.message,
                 status: "error",
-                duration: 6900,
+                duration: 1000,
                 isClosable: true,
               });
             });
@@ -250,7 +253,7 @@ const Post = (props: Props) => {
       title: "Success",
       description: "Post reported succesfully",
       status: "success",
-      duration: 6900,
+      duration: 1000,
       isClosable: true,
     });
   };
@@ -285,7 +288,7 @@ const Post = (props: Props) => {
             title: "Success",
             description: "Like removed succesfully",
             status: "success",
-            duration: 250,
+            duration: 1000,
             isClosable: true,
           });
         })
@@ -294,7 +297,7 @@ const Post = (props: Props) => {
             title: "Error",
             description: err?.message,
             status: "error",
-            duration: 250,
+            duration: 1000,
             isClosable: true,
           });
         });
@@ -316,7 +319,7 @@ const Post = (props: Props) => {
             title: "Success",
             description: "Like added succesfully",
             status: "success",
-            duration: 250,
+            duration: 1000,
             isClosable: true,
           });
         })
@@ -325,7 +328,7 @@ const Post = (props: Props) => {
             title: "Error",
             description: err?.message,
             status: "error",
-            duration: 250,
+            duration: 1000,
             isClosable: true,
           });
         });
@@ -368,7 +371,7 @@ const Post = (props: Props) => {
             title: "Success",
             description: "Post unsaved succesfully",
             status: "success",
-            duration: 250,
+            duration: 1000,
             isClosable: true,
           });
         })
@@ -377,7 +380,7 @@ const Post = (props: Props) => {
             title: "Error",
             description: err?.message,
             status: "error",
-            duration: 250,
+            duration: 1000,
             isClosable: true,
           });
         });
@@ -405,7 +408,7 @@ const Post = (props: Props) => {
             title: "Success",
             description: "Post saved succesfully",
             status: "success",
-            duration: 250,
+            duration: 1000,
             isClosable: true,
           });
         })
@@ -414,7 +417,7 @@ const Post = (props: Props) => {
             title: "Error",
             description: err?.message,
             status: "error",
-            duration: 250,
+            duration: 1000,
             isClosable: true,
           });
         });
@@ -490,7 +493,13 @@ const Post = (props: Props) => {
           {loadyboi ? (
             <SkeletonCircle borderRadius={"100%"} height="12" width="14" />
           ) : (
-            <Avatar cursor="pointer" src={props?.posts?.userPfp} />
+            <Avatar
+              cursor="pointer"
+              src={props?.posts?.userPfp}
+              onClick={() => {
+                navigate("/profile/" + props?.posts?.userId);
+              }}
+            />
           )}
         </Tooltip>
         <Flex
@@ -573,7 +582,9 @@ const Post = (props: Props) => {
                   {caption?.length >= 5 &&
                   caption?.length <= 100 &&
                   image !== "" ? (
-                    <Button onClick={updatePost}>Update</Button>
+                    <Button onClick={updatePost} isLoading={updateLoading}>
+                      Update
+                    </Button>
                   ) : (
                     <Button disabled>Update</Button>
                   )}
@@ -768,6 +779,9 @@ const Post = (props: Props) => {
                     colorMode === "light" ? "#efefef" : "#20242a",
                 }}
                 padding="1rem"
+                onClick={() => {
+                  navigate("/profile/" + comment?.userId);
+                }}
               >
                 <Avatar src={comment?.userPfp} />
                 <Flex flexDirection="column" gap="0.6rem" alignItems="start">
@@ -782,7 +796,12 @@ const Post = (props: Props) => {
             ))}
           </DrawerBody>
           <DrawerFooter gap="1rem" alignItems="center">
-            <Avatar />
+            <Tooltip label={auth?.currentUser?.displayName} openDelay={200}>
+              <Avatar
+                src={auth?.currentUser?.photoURL as string | undefined}
+                cursor="pointer"
+              />
+            </Tooltip>
             <Input
               placeholder="Type here..."
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

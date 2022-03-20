@@ -43,6 +43,7 @@ type Props = {
   createdAt: string;
   pfp: string;
   uid: string;
+  postsLength: number;
 };
 
 const ProfileSidebar = (props: Props) => {
@@ -123,7 +124,7 @@ const ProfileSidebar = (props: Props) => {
           auth?.currentUser?.uid as string
         ),
         {
-          username: props.username,
+          username: props?.username,
         }
       )
         .then(() => {
@@ -172,7 +173,7 @@ const ProfileSidebar = (props: Props) => {
       alignItems="center"
       position="sticky"
       top="23%"
-      gap="1rem"
+      gap="1.4rem"
     >
       <Tooltip label={props?.username} openDelay={200}>
         <Avatar
@@ -186,7 +187,13 @@ const ProfileSidebar = (props: Props) => {
       <Heading as="h3" size="lg" marginRight="2rem" marginLeft="2rem">
         {props?.username}
       </Heading>
-      <Heading as="h3" size="md" marginRight="2rem" marginLeft="2rem">
+      <Heading
+        as="h3"
+        size="md"
+        marginRight="2rem"
+        marginLeft="2rem"
+        color="gray.400"
+      >
         {props?.bio}
       </Heading>
       <Flex alignItems="center" width="100%" gap="2rem" justifyContent="center">
@@ -194,7 +201,7 @@ const ProfileSidebar = (props: Props) => {
           <Heading as="h4" size="md">
             Followers
           </Heading>
-          <Heading as="h4" size="sm">
+          <Heading as="h4" size="sm" color="gray.400">
             {followersList?.length}
           </Heading>
         </Flex>
@@ -202,8 +209,8 @@ const ProfileSidebar = (props: Props) => {
           <Heading as="h4" size="md">
             Posts
           </Heading>
-          <Heading as="h4" size="sm">
-            0
+          <Heading as="h4" size="sm" color="gray.400">
+            {props?.postsLength}
           </Heading>
         </Flex>
       </Flex>
@@ -274,7 +281,7 @@ const ProfileSidebar = (props: Props) => {
           </MenuList>
         </Menu>
       </Flex>
-      <Heading marginBottom="1rem" as="h4" size="sm">
+      <Heading marginBottom="1rem" as="h4" size="sm" color="gray.500">
         {/* @ts-ignore */}
         Joined {format(props?.createdAt?.toDate())}
       </Heading>
