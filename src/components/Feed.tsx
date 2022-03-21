@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import Post from "./Post";
+import { useNavigate } from "react-router-dom";
 
 type Posts = {
   caption: string;
@@ -35,10 +36,12 @@ type Props = {
   searchPosts?: Array<Posts>;
   libraryPosts?: Array<Posts>;
   profilePosts?: Array<Posts>;
+  followersData?: any;
 };
 
 const Feed = (props: Props) => {
   const toast = useToast();
+  const navigate = useNavigate();
   return props?.isExplore ? (
     <Flex
       flexDirection="column"
@@ -161,32 +164,23 @@ const Feed = (props: Props) => {
       height="max-content"
     >
       <Flex gap="2rem" alignItems="center" flexWrap="wrap" marginBottom="1rem">
-        <Tooltip label="Your mom" openDelay={400}>
-          <Avatar width="16" height="16" cursor="pointer" />
-        </Tooltip>
-        <Tooltip label="Your uncle" openDelay={400}>
-          <Avatar width="16" height="16" cursor="pointer" />
-        </Tooltip>
-        <Tooltip label="Your dad" openDelay={400}>
-          <Avatar width="16" height="16" cursor="pointer" />
-        </Tooltip>
-        <Tooltip label="Branu" openDelay={400}>
-          <Avatar width="16" height="16" cursor="pointer" />
-        </Tooltip>
-        <Tooltip label="Tim" openDelay={400}>
-          <Avatar width="16" height="16" cursor="pointer" />
-        </Tooltip>
-        <Tooltip label="Tim mom" openDelay={400}>
-          <Avatar width="16" height="16" cursor="pointer" />
-        </Tooltip>
+        {props?.followersData?.map((user: any, index: number) => (
+          <Tooltip label={user?.username} openDelay={400} key={index}>
+            <Avatar
+              width="16"
+              height="16"
+              cursor="pointer"
+              src={user?.pfp}
+              onClick={() => {
+                navigate(`/profile/${user?.uid}`);
+              }}
+            />
+          </Tooltip>
+        ))}
       </Flex>
       <Heading as="h4" size="md">
         Your followers post
       </Heading>
-      <Post />
-      <Post />
-      <Post />
-      <Post />
     </Flex>
   ) : (
     <Flex

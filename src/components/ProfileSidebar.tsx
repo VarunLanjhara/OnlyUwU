@@ -124,7 +124,9 @@ const ProfileSidebar = (props: Props) => {
           auth?.currentUser?.uid as string
         ),
         {
-          username: props?.username,
+          username: auth?.currentUser?.displayName,
+          uid: auth?.currentUser?.uid,
+          pfp: auth?.currentUser?.photoURL,
         }
       )
         .then(() => {
