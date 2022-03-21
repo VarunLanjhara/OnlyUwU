@@ -79,7 +79,7 @@ const ProfileSidebar = (props: Props) => {
   };
   useEffect(() => {
     getFollowing();
-  }, [db, following, auth?.currentUser?.uid, props?.uid]);
+  }, [db, auth?.currentUser?.uid, props?.uid]);
   const [followLoading, setFollowLoadig] = useState(false);
   const followUser = async () => {
     setFollowLoadig(true);
@@ -163,13 +163,13 @@ const ProfileSidebar = (props: Props) => {
         setFollowersList(followers);
       }
     );
-  }, [db, auth?.currentUser?.uid]);
+  }, [db, props?.uid]);
   return (
     <Flex
       width="100%"
       height="max-content"
       flexDirection="column"
-      boxShadow="lg"
+      boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
       alignItems="center"
       position="sticky"
       top="23%"

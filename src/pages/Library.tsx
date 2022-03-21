@@ -40,7 +40,7 @@ const Library = () => {
   };
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [db, auth?.currentUser?.uid]);
   return (
     <div>
       <Navbar />

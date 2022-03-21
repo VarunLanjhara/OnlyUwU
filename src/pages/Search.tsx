@@ -22,7 +22,6 @@ const Search = () => {
   const db = getFirestore(app);
   const { caption }: Readonly<Params<string>> = useParams();
   const [posts, setPosts] = useState([]);
-  console.log(posts);
   const postsRef = collection(db, "posts");
   const q = query(postsRef, where("caption", "==", caption));
   const getPosts = async () => {
@@ -37,7 +36,7 @@ const Search = () => {
   };
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [caption, db]);
   return (
     <div>
       <Navbar />

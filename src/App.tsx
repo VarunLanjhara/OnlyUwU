@@ -12,11 +12,20 @@ import Search from "./pages/Search";
 import Followers from "./pages/Followers";
 import Create from "./pages/Create";
 import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route
+          path="*"
+          element={
+            <PrivateRoute>
+              <NotFound />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/"
           element={

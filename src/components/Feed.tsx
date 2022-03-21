@@ -99,9 +99,25 @@ const Feed = (props: Props) => {
       <Heading as="h4" size="md">
         Search results
       </Heading>
-      {props?.searchPosts?.map((post, index) => (
-        <Post key={index} posts={post} />
-      ))}
+      {props?.searchPosts?.length === 0 ? (
+        <Flex
+          width="100%"
+          justifyContent="center"
+          alignItems="center"
+          height="80vh"
+          flexDirection="column"
+          gap="1rem"
+        >
+          <Image alt="" src="/ohno.png" width="50%" height="50%" />
+          <Heading as="h4" size="md" color="gray.500">
+            No search results found
+          </Heading>
+        </Flex>
+      ) : (
+        props?.searchPosts?.map((post, index) => (
+          <Post key={index} posts={post} />
+        ))
+      )}
     </Flex>
   ) : props?.isProfile ? (
     <Flex

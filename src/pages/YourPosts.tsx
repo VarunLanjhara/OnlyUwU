@@ -36,7 +36,7 @@ const YourPosts = () => {
   };
   useEffect(() => {
     getPosts();
-  }, [auth]);
+  }, [auth?.currentUser?.uid, db]);
   return (
     <div>
       <Navbar />

@@ -23,7 +23,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<DocumentData | undefined>(undefined);
   useEffect(() => {
     document.title = `OnlyUwU - ${profile?.username}`;
-  }, [profile]);
+  }, [profile?.username]);
   const { uuid } = useParams();
   const db = getFirestore(app);
   const toast = useToast();
@@ -60,7 +60,7 @@ const Profile = () => {
   };
   useEffect(() => {
     getPosts();
-  }, [uuid]);
+  }, [uuid, db]);
   if (profile === undefined) {
     return <Loader />;
   }
@@ -90,7 +90,7 @@ const Profile = () => {
           createdAt={profile?.createdAt}
           pfp={profile?.pfp}
           uid={profile?.uid}
-          postsLength = {posts?.length}
+          postsLength={posts?.length}
         />
       </Grid>
     </div>

@@ -1,6 +1,4 @@
 import {
-  Avatar,
-  Button,
   Divider,
   Flex,
   Heading,
@@ -14,15 +12,14 @@ import {
   onSnapshot,
   getFirestore,
   query,
-  orderBy,
   DocumentData,
-  doc,
   where,
   limit,
 } from "firebase/firestore";
 import { app } from "../firebase";
 import { getAuth } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import WhoToFollow from "./WhoToFollow";
 
 const LeftSidebar = () => {
   const navigate = useNavigate();
@@ -50,7 +47,7 @@ const LeftSidebar = () => {
   const [postsLoading, setpostsLoading] = useState(true);
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [db]);
   const [recommendedusers, setRecommendedUsers] = useState<
     DocumentData | undefined
   >(undefined);
@@ -69,7 +66,6 @@ const LeftSidebar = () => {
       setRecommendedUsers(users);
     });
   };
-  const [usersLoading, setusersLoading] = useState(true);
   useEffect(() => {
     getUsers();
   }, [db]);
@@ -81,7 +77,12 @@ const LeftSidebar = () => {
       flexDirection="column"
       gap="1rem"
     >
-      <Flex boxShadow="md" flexDirection="column" padding="1.5rem" width="100%">
+      <Flex
+        boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
+        flexDirection="column"
+        padding="1.5rem"
+        width="100%"
+      >
         <Flex width="80%" flexDirection="column" gap="0.6rem">
           <Heading as="h4" size="lg">
             Who to follow
@@ -101,41 +102,20 @@ const LeftSidebar = () => {
         </Flex>
         <Flex width="100%" flexDirection="column" gap="1rem" marginTop="1rem">
           {recommendedusers?.map((user: any) => (
-            <Flex justifyContent="space-between">
-              <Flex flexDirection="row" gap="0.6rem" alignItems="center">
-                <Avatar
-                  cursor="pointer"
-                  src={user?.pfp}
-                  onLoad={() => {
-                    setusersLoading(false);
-                  }}
-                />
-                {!usersLoading ? (
-                  <Heading as="h5" size="sm">
-                    {user?.username}
-                  </Heading>
-                ) : (
-                  <Skeleton width="5rem" height="1rem" />
-                )}
-              </Flex>
-              {!usersLoading ? (
-                <Button
-                  colorScheme="purple"
-                  variant="solid"
-                  onClick={() => {
-                    navigate("/profile/" + user?.uid);
-                  }}
-                >
-                  Follow
-                </Button>
-              ) : (
-                <Skeleton width="5rem" height="3rem" />
-              )}
-            </Flex>
+            <WhoToFollow
+              userName={user?.username}
+              userId={user?.uid}
+              userPfp={user?.pfp}
+            />
           ))}
         </Flex>
       </Flex>
-      <Flex boxShadow="md" flexDirection="column" padding="1.5rem" width="100%">
+      <Flex
+        boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
+        flexDirection="column"
+        padding="1.5rem"
+        width="100%"
+      >
         <Flex width="80%" flexDirection="column" gap="0.6rem">
           <Heading as="h4" size="lg">
             Recommended posts

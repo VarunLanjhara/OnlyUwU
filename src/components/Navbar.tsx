@@ -163,7 +163,10 @@ const Navbar = () => {
       <Menu>
         <MenuButton>
           <Tooltip label={auth?.currentUser?.displayName} openDelay={400}>
-            <Avatar cursor="pointer" src={auth?.currentUser?.photoURL as string | undefined} />
+            <Avatar
+              cursor="pointer"
+              src={auth?.currentUser?.photoURL as string | undefined}
+            />
           </Tooltip>
         </MenuButton>
         <MenuList>

@@ -353,7 +353,7 @@ const Post = (props: Props) => {
   };
   useEffect(() => {
     getSavedPosts();
-  }, [saved, auth?.currentUser?.uid, props?.posts?.id, db]);
+  }, [auth?.currentUser?.uid, props?.posts?.id, db]);
   const savePost = async () => {
     if (saved) {
       await deleteDoc(
@@ -477,13 +477,13 @@ const Post = (props: Props) => {
         setComments(commentsboi);
       }
     );
-  }, []);
+  }, [db,props?.posts?.id]);
   return (
     <Flex
       flexDirection="column"
       padding="1rem"
       width="100%"
-      boxShadow="lg"
+      boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
       borderRadius="md"
       gap="1rem"
       marginBottom="0.7rem"

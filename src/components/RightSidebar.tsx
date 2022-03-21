@@ -33,7 +33,7 @@ const RightSidebar = () => {
           padding="1rem"
           borderRadius="1rem"
           gap="0.2rem"
-          boxShadow="md"
+          boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
         >
           <Flex borderRadius="50%">
             <Image src="/catboi.jpeg" alt="" width="90%" height="90%" />
@@ -48,7 +48,7 @@ const RightSidebar = () => {
       </Tooltip>
       <Flex
         borderRadius="1rem"
-        boxShadow="md"
+        boxShadow="0 3px 10px rgb(0 0 0 / 0.2)"
         marginTop="2rem"
         width="100%"
         flexDirection="column"
