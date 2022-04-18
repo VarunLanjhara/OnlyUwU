@@ -50,7 +50,7 @@ const ProfileSidebar = (props: Props) => {
   const db = getFirestore(app);
   const auth = getAuth(app);
   const toast = useToast();
-  const SHARE_URL = "http://localhost:3000/profile/" + props.uid;
+  const SHARE_URL = "https://onlyuwuboi.web.app/profile/" + props.uid;
   const copyClipboard = () => {
     navigator.clipboard.writeText(SHARE_URL);
     toast({

@@ -477,7 +477,7 @@ const Post = (props: Props) => {
         setComments(commentsboi);
       }
     );
-  }, [db,props?.posts?.id]);
+  }, [db, props?.posts?.id]);
   return (
     <Flex
       flexDirection="column"
@@ -636,7 +636,7 @@ const Post = (props: Props) => {
       </Flex>
       {loadyboi ? <Skeleton width="100%" height="20rem" /> : ""}
       <Image
-        src={props?.posts?.image}
+        src={props?.posts?.image?.includes("https://firebasestorage.googleapis.com/v0/b/onlyuwuboi.appspot.com") ? props?.posts?.image : "/ohno.png"}
         alt=""
         borderRadius="lg"
         onLoad={() => {

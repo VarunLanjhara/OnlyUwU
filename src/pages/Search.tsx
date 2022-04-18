@@ -23,7 +23,11 @@ const Search = () => {
   const { caption }: Readonly<Params<string>> = useParams();
   const [posts, setPosts] = useState([]);
   const postsRef = collection(db, "posts");
-  const q = query(postsRef, where("caption", "==", caption));
+  const q = query(
+    postsRef,
+    where("caption", ">=", caption),
+    where("caption", "<=", caption + "\uf8ff")
+  );
   const getPosts = async () => {
     onSnapshot(q, (snapshot) => {
       const posts = snapshot?.docs?.map((doc) => ({

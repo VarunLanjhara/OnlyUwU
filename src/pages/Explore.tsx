@@ -22,7 +22,7 @@ const Explore = () => {
   const [posts, setPosts] = useState([]);
   const db = getFirestore(app);
   const postsRef = collection(db, "posts");
-  const q = query(postsRef, orderBy("createdAt", "desc"), limit(5));
+  const q = query(postsRef, limit(5));
   const getPosts = async () => {
     onSnapshot(q, (snapshot) => {
       const posts = snapshot?.docs?.map((doc) => ({
